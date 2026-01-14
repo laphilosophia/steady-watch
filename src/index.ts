@@ -18,7 +18,7 @@ program
   .version('1.0.0')
   .parse();
 
-const options = program.opts(); // Context korunur
+const options = program.opts();
 const args = program.args;
 
 const filePattern = args[0];
@@ -35,7 +35,7 @@ const fileHashes = new Map<string, string>();
 // Helpers
 const getHash = (filePath: string): string | null => {
   try {
-    if (!fs.existsSync(filePath)) return null; // Dosya silinmişse
+    if (!fs.existsSync(filePath)) return null;
     const content = fs.readFileSync(filePath);
     return crypto.createHash('md5').update(content).digest('hex');
   } catch (e) {
@@ -47,8 +47,6 @@ const timestamp = () => chalk.gray(`[${new Date().toLocaleTimeString()}]`);
 
 const runCommand = () => {
   if (isRunning) {
-    // Opsiyonel: Eğer çok agresif olmak istersen burada kill() atabilirsin.
-    // Şimdilik "bitmesini bekle" stratejisi daha güvenli.
     if (verbose) console.log(chalk.yellow('⚠️  Previous command still running, skipping...'));
     return;
   }
@@ -78,8 +76,7 @@ const runCommand = () => {
   });
 };
 
-// Initial Scan (Opsiyonel: Başlangıçta mevcut dosyaların hash'ini al)
-// Chokidar 'add' eventlerini başta fırlattığı için otomatik dolacak.
+// Initial Scan
 
 console.log(chalk.bold.blue('\n🔭 Steady Watch Initialized'));
 console.log(`   ${chalk.dim('Pattern:')} ${filePattern}`);
@@ -88,10 +85,10 @@ console.log(`   ${chalk.dim('Delay:')}   ${delay}ms\n`);
 
 const watcher = chokidar.watch(filePattern, {
   ignored: [/node_modules/, /\.git/, /dist/, /build/],
-  ignoreInitial: false, // Başta dosyaları indexle
+  ignoreInitial: false,
 });
 
-// Ready event - watcher hazır olduğunda bildir
+// Ready event
 watcher.on('ready', () => {
   console.log(chalk.green('👁️  Watcher ready. Monitoring for changes...'));
   if (verbose) console.log(chalk.dim(`   Tracking ${fileHashes.size} file(s)`));
@@ -113,7 +110,6 @@ watcher.on('change', (filePath) => {
   const currentHash = getHash(filePath);
   const lastHash = fileHashes.get(filePath);
 
-  // 🛑 The Sniper Logic: İçerik değişmediyse (editör temp save yaptıysa) dur.
   if (currentHash === lastHash) {
     if (verbose) console.log(chalk.gray(`Skipping ghost change: ${path.basename(filePath)}`));
     return;
