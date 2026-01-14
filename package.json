@@ -8,8 +8,8 @@
     "prepublishOnly": "npm run build"
   },
   "bin": {
-    "steady-watch": "./dist/index.js",
-    "sw": "./dist/index.js"
+    "steady-watch": "dist/index.js",
+    "sw": "dist/index.js"
   },
   "files": [
     "dist"
