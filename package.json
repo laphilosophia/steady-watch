@@ -17,11 +17,12 @@
     "prepublishOnly": "npm run build"
   },
   "bin": {
-    "steady-watch": "dist/index.js",
-    "sw": "dist/index.js"
+    "steady-watch": "./bin/steady-watch",
+    "sw": "./bin/steady-watch"
   },
   "files": [
-    "dist"
+    "dist",
+    "bin"
   ],
   "keywords": [
     "watch",

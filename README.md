@@ -31,7 +31,6 @@ You can also use a config file instead of CLI options. Supported files:
 
 - `.steady-watchrc`
 - `.steady-watchrc.json`
-- `steady-watch.config.js`
 - `steady-watch.config.json`
 
 Example `steady-watch.config.json`:
@@ -53,17 +52,6 @@ Example `steady-watch.config.json`:
   "json": false,
   "theme": "default"
 }
-```
-
-Or `steady-watch.config.js`:
-
-```javascript
-module.exports = {
-  pattern: 'src/**/*.ts',
-  cmd: 'npm run build',
-  delay: 300,
-  verbose: false
-};
 ```
 
 ## Usage
