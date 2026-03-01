@@ -81,5 +81,5 @@ export interface CliOptions {
 }
 
 export interface CliArgs {
-  pattern: string;
+  pattern?: string;
 }

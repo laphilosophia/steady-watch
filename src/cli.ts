@@ -9,9 +9,10 @@ export function loadConfig(configPath?: string): Record<string, unknown> {
     '.steady-watchrc',
     '.steady-watchrc.json',
     'steady-watch.config.json'
-  ].filter(Boolean) as string[];
+  ];
 
   for (const cfgPath of searchPaths) {
+    if (!cfgPath) continue;
     try {
       const fullPath = path.resolve(cfgPath);
       if (fs.existsSync(fullPath)) {
@@ -77,8 +78,8 @@ export function parseCliArgs(): { args: CliArgs; opts: CliOptions } {
   program
     .name('steady-watch')
     .description('Intelligent file watcher with debouncing and content hashing.')
-    .argument('<files>', 'Glob pattern to watch (e.g., "src/**/*.ts")')
-    .requiredOption('-c, --cmd <command>', 'Command(s) to execute on change (supports quotes)')
+    .argument('[files]', 'Glob pattern to watch (e.g., "src/**/*.ts")')
+    .option('-c, --cmd <command>', 'Command(s) to execute on change (supports quotes)')
     .option('-d, --delay <ms>', 'Debounce delay in milliseconds', '300')
     .option('-v, --verbose', 'Show hash calculations', false)
     .option('-q, --quiet', 'Minimize output', false)
