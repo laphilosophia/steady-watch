@@ -1,3 +1,5 @@
 #!/usr/bin/env node
 
-import './index.js';
+const path = require('path');
+const distPath = path.join(path.dirname(process.argv[1]), '..', 'dist', 'index.js');
+require(distPath);

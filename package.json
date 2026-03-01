@@ -1,6 +1,6 @@
 {
   "name": "@laphilosophia/steady-watch",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Intelligent file watcher with content hashing and debouncing. No more ghost rebuilds.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

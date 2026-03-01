@@ -46,6 +46,8 @@ export function runCli(): void {
   });
 }
 
-if (require.main === module) {
+const isMain = require.main === module || process.argv[1]?.includes('index.js') || process.argv[1]?.includes('steady-watch');
+
+if (isMain) {
   runCli();
 }
