@@ -1,6 +1,7 @@
 export * from './types.js';
 export * from './theme.js';
 export { SteadyWatcher, steadyWatch } from './watcher.js';
+export { CLI_VERSION, loadConfig, mergeOptions, parseCliArgs } from './cli.js';
 
 import { SteadyWatcher, steadyWatch } from './watcher.js';
 import { parseCliArgs, loadConfig, mergeOptions } from './cli.js';
@@ -8,46 +9,44 @@ import { parseCliArgs, loadConfig, mergeOptions } from './cli.js';
 export function runCli(): void {
   const { args, opts } = parseCliArgs();
   const config = loadConfig(opts.config);
-  
-  if (opts.config && config.cmd) {
-    opts.cmd = config.cmd as string;
-  }
 
   const options = mergeOptions(args, opts, config);
-  
-  if (!options.cmd) {
-    console.error('Error: Command is required. Use -c option or config file.');
-    process.exit(1);
-  }
 
   const watcher = new SteadyWatcher(options);
+  let exiting = false;
+
+  const shutdown = async (exitCode: number, message?: string) => {
+    if (exiting) return;
+    exiting = true;
+    if (message) console.error(message);
+    try {
+      await watcher.close();
+    } finally {
+      process.exit(exitCode);
+    }
+  };
 
   watcher.on('error', (err) => {
-    console.error(`Error: ${err.message}`);
-    process.exit(1);
+    void shutdown(1, `Error: ${err.message}`);
   });
 
   watcher.start().catch((err) => {
-    console.error(`Failed to start: ${err.message}`);
-    process.exit(1);
+    void shutdown(1, `Failed to start: ${err.message}`);
   });
 
-  const shutdown = async (signal: string) => {
+  const shutdownSignal = async (signal: string) => {
+    if (exiting) return;
     console.log(`\nReceived ${signal}, shutting down...`);
-    await watcher.close();
-    process.exit(0);
+    await shutdown(0);
   };
 
-  process.on('SIGINT', () => shutdown('SIGINT'));
-  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  process.on('SIGINT', () => void shutdownSignal('SIGINT'));
+  process.on('SIGTERM', () => void shutdownSignal('SIGTERM'));
   process.on('uncaughtException', (err) => {
-    console.error('Uncaught exception:', err);
-    process.exit(1);
+    void shutdown(1, `Uncaught exception: ${err instanceof Error ? err.stack || err.message : String(err)}`);
   });
 }
 
-const isMain = require.main === module || process.argv[1]?.includes('index.js') || process.argv[1]?.includes('steady-watch');
-
-if (isMain) {
+if (require.main === module) {
   runCli();
 }

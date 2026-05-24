@@ -1,6 +1,6 @@
 {
   "name": "@laphilosophia/steady-watch",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "description": "Intelligent file watcher with content hashing and debouncing. No more ghost rebuilds.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -14,6 +14,7 @@
   },
   "scripts": {
     "build": "tsup",
+    "test": "npm run build && node scripts/smoke-tests.mjs",
     "prepublishOnly": "npm run build"
   },
   "bin": {
@@ -23,6 +24,7 @@
   "files": [
     "dist",
     "bin",
+    "scripts",
     "steady-watch.config.json"
   ],
   "keywords": [
